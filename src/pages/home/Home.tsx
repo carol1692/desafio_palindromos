@@ -1,86 +1,92 @@
-import { useState, type FormEvent} from "react"
+import { useState, type FormEvent, type ChangeEvent } from "react";
 
-function Home() {
+export default function Home() {
+  const [texto, setTexto] = useState("");
+  const [resultado, setResultado] = useState("");
 
-	const [texto, setTexto] = useState("")
-	const [resultado, setResultado] = useState("")
+  // Função que limpa e normaliza o texto
+  function limparTexto(valor: string) {
+    return valor
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")   // remove acentos
+      .replace(/[^a-z0-9\s]/gi, "");     // remove símbolos e traços
+  }
 
-	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-		const valor = e.target.value.toLocaleLowerCase();
-		setTexto(valor.normalize("NFD")
-		.replace(/[\u0300-\u036f]/g, "")  // remove acentos
-		.replace(/-/g, "")                // remove traços
-		.replace(/[^a-zA-Z0-9\s]/g, ""));
-	}
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    const valorLimpo = limparTexto(e.target.value);
+    setTexto(valorLimpo);
+  }
 
-  	function minhaFuncao(e: FormEvent<HTMLFormElement>) {
-		e.preventDefault()
-			setResultado("")
-				console.log('primeira')
-				console.log(texto.replace(/\s+/g, ""))
-				console.log('ultima')
-				const invertido = texto.split("").reverse().join("");
-				console.log(invertido.replace(/\s+/g, ""))
-		if( texto.replace(/\s+/g, "") === invertido.replace(/\s+/g, "")){
-			setResultado("É UM PALINDROMO YAY")
-		}	
-		else{
-			setResultado("FUEN FUEN FUEN NÃO É UM PALINDROMO")
-		}	
-  	}
-   
+  // Verifica se é palíndromo
+  function verificaPalindromo(str: string) {
+    const semEspacos = str.replace(/\s+/g, "");
+    const invertido = semEspacos.split("").reverse().join("");
+    return semEspacos === invertido;
+  }
+
+  function minhaFuncao(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (texto.trim() === "") {
+      setResultado("Digite alguma coisa! 😅");
+      return;
+    }
+
+    const ehPalindromo = verificaPalindromo(texto);
+
+    setResultado(
+      ehPalindromo
+        ? "É UM PALÍNDROMO! 🎉"
+        : "Não é um palíndromo 😔"
+    );
+  }
+
   return (
     <>
-		{/* FORM */}
-		<form onSubmit={minhaFuncao} className="w-full">
-   		<div className="grid grid-cols-3 gap-4 p-4 pb-0">
+      <form onSubmit={minhaFuncao} className="w-full">
+        <div className="grid grid-cols-3 gap-4 p-4 pb-0">
 
-        				{/* COLUNA 1 — ocupa 2/3 */}
-						<div className="col-span-2 flex flex-col gap-2 justify-center h-full">
-						
-							<label htmlFor="palavra" className="text-white">
-								Escreva uma palavra ou texto
-							</label>
+          {/* COLUNA 1 */}
+          <div className="col-span-2 flex flex-col gap-3 justify-center h-full">
 
-							<input
-								type="text"
-								placeholder="Insira palavra ou frase"
-								name="palavra"
-								className="border-2 rounded p-2"
-								onChange={handleChange}
-							/>
+            <label htmlFor="palavra">
+              Escreva uma palavra ou texto
+            </label>
 
-							<div className="mx-auto hubballi-regular text-2xl">
-								{resultado}
-							</div>
-							
-							<button
-								className="rounded border hover:bg-gray-300 
-											w-1/2 py-2 mx-auto flex justify-center hubballi-regular text-2xl"
-								type="submit"
-							>
-								Enviar
-							</button>
-						</div>
+            <input
+              type="text"
+              placeholder="Insira palavra ou frase"
+              name="palavra"
+              className="border-2 rounded p-2"
+              onChange={handleChange}
+            />
 
+            {resultado && (
+              <div className="mx-auto hubballi-regular text-2xl">
+                {resultado}
+              </div>
+            )}
 
-						{/* COLUNA 2 — ocupa 1/3 */}
-						<div className="col-span-1 flex flex-col gap-2 justify-end">
-							{/* Aqui você coloca o que quiser */}
-							<img src="./public/mendoin.svg" alt="" className="w-full h-auto object-contain" />
-						</div>
-					</div>
+            <button
+              className="rounded border hover:bg-gray-300 w-1/2 py-2 mx-auto flex justify-center hubballi-regular text-2xl"
+              type="submit"
+            >
+              Enviar
+            </button>
+          </div>
 
-					
-				</form>
-		
+          {/* COLUNA 2 */}
+          <div className="col-span-1 flex items-end">
+            <img
+              src="./public/mendoin.svg"
+              alt="Mascote"
+              className="w-full h-auto object-contain"
+            />
+          </div>
 
-	</>
-    
- 
-    
-
-  )
+        </div>
+      </form>
+    </>
+  );
 }
-
-export default Home
