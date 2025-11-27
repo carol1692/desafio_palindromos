@@ -79,7 +79,7 @@ export default function Home() {
           {/* COLUNA 2 */}
           <div className="col-span-1 flex items-end">
             <img
-              src="./public/mendoin.svg"
+              src="https://ik.imagekit.io/5vd9mfrfv/desafio%20palindromo%20/mendoin.svg"
               alt="Mascote"
               className="w-full h-auto object-contain"
             />
